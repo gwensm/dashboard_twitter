@@ -1,0 +1,32 @@
+.aa_button_config
+{
+	background-color: white;
+    margin: 20px 0px;
+    padding: 30px;
+
+}
+
+#button_config{
+	    border: 1px #4099FF solid;
+    padding: 10px;
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    background-color: #4099FF;
+}
+
+#button_config:hover{
+
+    color: #4099FF;
+
+    background-color: #fff;
+}
+
+.aa_button_config span
+{
+	color: #4099FF;
+	margin-left: 50px;
+	font-size: 18px;
+
+}
