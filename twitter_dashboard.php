@@ -167,13 +167,17 @@ function twitter_dashbord_create_main_page() {
    <?php
 }
 
+
+
+
 //****************************************************************************
 // content of submenu page
 //****************************************************************************
 
 function sub_menu_config_page() {
   global $title;   // page title
-   
+  
+
   //********************************************************
   // API KEY SELECT
   //********************************************************
@@ -190,7 +194,7 @@ function sub_menu_config_page() {
 
             
   $select = $wpdb->get_results( $query );
-  
+
   //*****************************************************************************************
   // VIEW CONFIG API KEY
   //*****************************************************************************************
@@ -205,19 +209,23 @@ function sub_menu_config_page() {
             
             <div>
               <div class="div_block">
-                  <input id="access_token" class="form_style" name="access_token" placeholder="Access token" required  type="text" value="<?php echo $select[0]->api_config_acces_token ?>" />
+                  <div class="input_name">Access Token</div>
+                  <input id="access_token" class="form_style" name="access_token" placeholder="Access token" required  type="text" value="<?php echo $select[0]->api_config_acces_token ?>" /> 
               </div>
                 
               <div class="div_block">
-                  <input id="access_token_secret" class="form_style" name="access_token_secret" placeholder="Access token secret" required  type="text" value="<?php echo $select[0]->api_config_acces_token_secret ?>"/>
+                  <div class="input_name">Access token secret</div>
+                  <input id="access_token_secret" class="form_style" name="access_token_secret" placeholder="Access token secret" required  type="text" value="<?php echo $select[0]->api_config_acces_token_secret ?>"/> 
               </div>
                 
               <div class="div_block">
+                  <div class="input_name">Consumer key</div>
                   <input id="consumer_key" class="form_style" name="consumer_key" placeholder="Consumer key" required  type="text" value="<?php echo $select[0]->api_config_consumer_key ?>"/>
               </div>
                 
               <div class="div_block">
-                  <input id="consumer_secret" class="form_style" name="consumer_secret" placeholder="Consumer secret" required  type="text" value="<?php echo $select[0]->api_config_consumer_secret ?>"/>
+                  <div class="input_name">Consumer secret</div>
+                  <input id="consumer_secret" class="form_style" name="consumer_secret" placeholder="Consumer secret" required  type="text" value="<?php echo $select[0]->api_config_consumer_secret ?>"/> 
               </div>
 
               <div class="div_block">
@@ -229,37 +237,6 @@ function sub_menu_config_page() {
         </div>
       </div>
   <?php 
-
-  
-//********************************************************************
-// CRON ALL METRICS
-//********************************************************************
-
-$today = date('d-m-Y');
-  
-$table_name = $wpdb->prefix . 'twitter_metrics';
-
-$query = "  SELECT DATE_FORMAT(date_query, '%d-%m-%Y') as date_query 
-            FROM $table_name 
-            order by twitter_metrics_id desc 
-            limit 1 ";
-
-$select = $wpdb->get_results( $query );
-$select2 = $wpdb->query( $query );
-
-$date_comp = $select[0]->date_query;
-
-if( ($select[0] == "" && $select2 !== false) || ($date_comp != $today && $select2 !== false )){
-  require_once('all-metrics_daily_cron.php');
-}
-
-
-//************************************************************************
-// CRON DAILY TWEET
-//************************************************************************
-
-require_once('daily_tweet_hourly_cron.php');
-
 
   } else {
      ?>
@@ -299,8 +276,86 @@ require_once('daily_tweet_hourly_cron.php');
     
 }
 
+  
+  //********************************************************
+  // API KEY SELECT
+  //********************************************************
+  global $wpdb;
+
+  $table_name = $wpdb->prefix . 'config_twitter_api';
+
+  $query = "SELECT  api_config_id, api_config_acces_token, 
+                    api_config_acces_token_secret, 
+                    api_config_consumer_key, 
+                    api_config_consumer_secret 
+            FROM  $table_name";
 
 
+            
+  $select_api_key = $wpdb->get_results( $query );
 
 
+if (  ($select_api_key[0]->api_config_id === '0') && ($select_api_key[0]->api_config_acces_token !== '') ) {
+
+  //********************************************************************
+  // CRON ALL METRICS
+  //********************************************************************
+
+  $today = date('d-m-Y');
+    
+  $table_name = $wpdb->prefix . 'twitter_metrics';
+
+  $query = "  SELECT DATE_FORMAT(date_query, '%d-%m-%Y') as date_query 
+              FROM $table_name 
+              order by twitter_metrics_id desc 
+              limit 1 ";
+
+  $select_twitter_metrics = $wpdb->get_results( $query );
+  $select_twitter_metrics2 = $wpdb->query( $query );
+
+  $date_comp = $select_twitter_metrics[0]->date_query;
+
+    if( ($select_twitter_metrics[0] == "" && $select_twitter_metrics2 !== false) || ($date_comp != $today && $select_twitter_metrics2 !== false )){
+      require_once('all-metrics_daily_cron.php');
+    }
+
+
+  //************************************************************************
+  // CRON DAILY TWEET
+  //************************************************************************
+  $today_long = date('d-m-Y G:i:s');
+
+  $table_name = $wpdb->prefix . 'twitter_tweets';
+
+  $select_tweet_date = "  SELECT `date_insert`  
+              FROM `wp_twitter_tweets` 
+              order by `wp_twitter_id` 
+              desc limit 1";
+
+  $select_date_tweet = $wpdb->get_results( $select_tweet_date );
+  $select_date_ok = $wpdb->query( $select_tweet_date );
+
+  $date_insert = $select_date_tweet[0]->date_insert;
+
+  if( ( $select_tweet_date[0] == "" && $select_date_ok !== false) || ( strtotime($date_insert) < strtotime('-2 hours') )){
+    require_once('daily_tweet_hourly_cron.php');
+  }
+
+
+  $table_name = $wpdb->prefix . 'twitter_mentions';
+
+  $select_mention_date = "  SELECT `date_insert`  
+              FROM $table_name 
+              order by `wp_mention_id` 
+              desc limit 1";
+
+  $select_date_mention = $wpdb->get_results( $select_mention_date );
+  $select_date_ok = $wpdb->query( $select_mention_date );
+
+  $date_insert = $select_date_mention[0]->date_insert;
+
+  if( ( $select_mention_date[0] == "" && $select_date_ok !== false) || ( strtotime($date_insert) < strtotime('-2 hours') )){
+    require_once('daily_mention_hourly_cron.php');
+  }
+}
 

@@ -1,7 +1,5 @@
 <?php
 
-/*
-
 require_once('assets/inc/TwitterAPIExchange.php');
   
 
@@ -59,8 +57,7 @@ for ($i=0; $i <= $count_result - 1 ; $i++)
     $mention_infos[$i][1] =  $result[$i]->text;
     $mention_infos[$i][2] =  $post_date;
     $mention_infos[$i][3] =  $result[$i]->user->screen_name;
-    //echo "<pre>";print_r($tweet_infos);echo "</pre>";
-   
+ 
     
   }
   else
@@ -70,7 +67,7 @@ for ($i=0; $i <= $count_result - 1 ; $i++)
 
 }
   
-//echo "<pre>";print_r($tweet_infos);echo "</pre>";
+//echo "<pre>";print_r($mention_infos);echo "</pre>";
 
 $count_mention_infos = count($mention_infos);
 
@@ -88,14 +85,10 @@ for ($i=0; $i <= $count_mention_infos -1 ; $i++) {
     $insert_dayly_mention = " INSERT INTO $table_name (   `wp_twitter_mention_id`, 
                                           `wp_twitter_mention_content`, 
                                           `wp_twitter_mention_date`, 
-                                          `wp_twitter_remention_count`, 
-                                          `wp_twitter_favorite_count`, 
                                           `wp_twitter_screen_name`) 
                             VALUES (  '$wp_twitter_mention_id', 
                                       '$wp_twitter_mention_content', 
                                       '$wp_twitter_mention_date', 
-                                      '$wp_twitter_remention_count', 
-                                      '$wp_twitter_favorite_count', 
                                       '$wp_twitter_screen_name') ";
     //echo $insert_dayly_mention;
     $result = $wpdb->query( $insert_dayly_mention );
@@ -103,8 +96,5 @@ for ($i=0; $i <= $count_mention_infos -1 ; $i++) {
     if ( ( $result === FALSE ) ) {
       echo  __( "Oups ! Un problème a été rencontré." );
     } 
-    else
-    {
-      echo "----> OKOKOK <-------";
-    }
+
 }

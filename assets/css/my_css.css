@@ -30,3 +30,40 @@
 	font-size: 18px;
 
 }
+
+input.form_style
+{
+    width: 500px;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    border: 2px solid #4099FF;
+    border-radius: 10px;
+}
+
+.input_name
+{
+    font-size:17px;
+    padding: 0 20px;
+    color: #4099FF;
+    font-weight: 700;
+    width: 200px;
+    display: inline-block;
+}
+
+#btn-send{
+    border: 1px #4099FF solid;
+    padding: 10px;
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    background-color: #4099FF;
+    margin: 20px ;
+    cursor: pointer;
+}
+
+#btn-send:hover{
+    color: #4099FF;
+
+    background-color: #fff;
+}

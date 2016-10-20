@@ -72,7 +72,7 @@ for ($i=0; $i <= $count_result - 1 ; $i++)
   }
   else
   {
-    exit;
+    break;
   }
 }
 
@@ -113,7 +113,7 @@ for ($i=0; $i <= $count_result - 1 ; $i++)
   }
   else
   {
-    exit;
+    break;
   }
 }
 

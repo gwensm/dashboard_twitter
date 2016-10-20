@@ -111,8 +111,5 @@ for ($i=0; $i <= $count_tweet_infos -1 ; $i++) {
     if ( ( $result === FALSE ) ) {
       echo  __( "Oups ! Un problème a été rencontré." );
     } 
-    else
-    {
-      echo "----> OKOKOK <-------";
-    }
+
 }
