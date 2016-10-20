@@ -57,7 +57,7 @@ function twitter_dashboard_create_table()
           `wp_twitter_id` bigint(20) NOT NULL auto_increment,
           `wp_twitter_tweet_id` varchar(50) NOT NULL,
           `wp_twitter_tweet_content` varchar(150) NOT NULL,
-          `wp_twitter_tweet_date` varchar(20) NOT NULL,
+          `wp_twitter_tweet_date` datetime NOT NULL,
           `wp_twitter_retweet_count` int(11) NOT NULL,
           `wp_twitter_favorite_count` int(11) NOT NULL,
           `wp_twitter_screen_name` varchar(50) NOT NULL,
@@ -75,7 +75,7 @@ function twitter_dashboard_create_table()
           `wp_mention_id` bigint(20) NOT NULL auto_increment,
           `wp_twitter_mention_id` varchar(50) NOT NULL,
           `wp_twitter_mention_content` varchar(150) NOT NULL,
-          `wp_twitter_mention_date` varchar(20) NOT NULL,
+          `wp_twitter_mention_date` datetime NOT NULL,
           `wp_twitter_screen_name` varchar(50) NOT NULL,
           `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY  (wp_mention_id)
@@ -87,8 +87,15 @@ function twitter_dashboard_create_table()
 // run the install scripts upon plugin activation
 register_activation_hook(__FILE__,'twitter_dashboard_create_table');
 
+
 wp_register_style( 'my_css.css', plugin_dir_url( __FILE__ ) . 'assets/css/my_css.css');
 wp_enqueue_style( 'my_css.css');
+
+wp_register_style( 'bootstrap.min.css', plugin_dir_url( __FILE__ ) . 'assets/css/bootstrap.min.css');
+wp_enqueue_style( 'bootstrap.min.css');
+
+wp_register_style( 'custom.min.css', plugin_dir_url( __FILE__ ) . 'assets/css/custom.min.css');
+wp_enqueue_style( 'custom.min.css');
 
 require_once( 'config_api_twitter.php' );
 
@@ -159,12 +166,26 @@ function twitter_dashbord_add_dashboard_menu() {
 
 function twitter_dashbord_create_main_page() {
    global $title;   // titre de la page du menu, tel que spécifié dans la fonction add_menu_page
-   ?>
-   <div class="wrap">
-      <h2><?php echo $title; ?></h2>   
-      main page
-   </div>
-   <?php
+   
+  global $wpdb;
+
+  $table_name = $wpdb->prefix . 'config_twitter_api';
+
+  $query = "SELECT  api_config_id, api_config_acces_token, 
+                    api_config_acces_token_secret, 
+                    api_config_consumer_key, 
+                    api_config_consumer_secret 
+            FROM  $table_name";
+            
+  $select = $wpdb->get_results( $query );
+
+  if (  ($select[0]->api_config_id === '0') && ($select[0]->api_config_acces_token !== '') ) {
+   require_once('model/24h_metrics.php');
+   require_once('model/select_last_tweets.php');
+   require_once('model/select_last_mentions.php');
+   require_once('view/dashboard_view.php');
+ }
+
 }
 
 

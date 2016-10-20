@@ -1,13 +1,14 @@
 <?php
 
 require_once('assets/inc/TwitterAPIExchange.php');
-  
+require_once('model/select_api_key.php');
 
+/** Set access tokens here - see: https://dev.twitter.com/apps/ **/
 $settings = array(
-  'oauth_access_token' => "788062235054772224-9eFCaoMLiHQKxceAbHNhglR2CiErzTf",
-  'oauth_access_token_secret' => "b66YUQosOM5kmyRXlZQGovPT3bgfTCw80Yt0zNWY5oRH1",
-  'consumer_key' => "t8wOYfM7rx6ELBLWLVn8SPLx4",
-  'consumer_secret' => "MIMtHRAxAxzDJpATcLkUMMQej1r7QJqMgnEEPpBlUsMwwnp4UB"
+  'oauth_access_token' => $select[0]->api_config_acces_token,
+  'oauth_access_token_secret' => $select[0]->api_config_acces_token_secret,
+  'consumer_key' => $select[0]->api_config_consumer_key,
+  'consumer_secret' => $select[0]->api_config_consumer_secret
 );
 
 //*******************************************************************************
@@ -42,7 +43,7 @@ for ($i=0; $i <= $count_result - 1 ; $i++)
   //echo "<pre>";print_r($post_date);echo "</pre>";
   //echo strtotime("- 1 day"). "<br/><br/>";
 
-  $post_date = date("d-m-Y G:i:s", strtotime($post_date)); 
+  $post_date = date("Y-m-d G:i:s", strtotime($post_date)); 
   //echo "Today: ".$post_date;
 
   $test = strtotime($post_date);
